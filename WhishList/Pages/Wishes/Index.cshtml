@@ -1,0 +1,194 @@
+@page
+@model WhishList.Pages.Wishes.IndexModel
+
+@{
+    ViewData["Title"] = Model.ViewTitle;
+}
+
+<div class="container mt-4">
+    <!-- Page Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="display-4">@Model.ViewTitle</h1>
+
+            <!-- User filter info -->
+            @if (Model.FilteredUser != null)
+            {
+                <div class="alert alert-info d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-person-circle"></i>
+                        Showing wishes for: <strong>@Model.FilteredUser.FullName</strong>
+                        <span class="text-muted">(@Model.FilteredUser.Email)</span>
+                    </div>
+                    <a asp-page="Index" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Clear Filter
+                    </a>
+                </div>
+            }
+
+            <!-- Search info -->
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <div class="alert alert-info d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-search"></i>
+                        Search results for: <strong>@Model.SearchTerm</strong>
+                    </div>
+                    <a asp-page="Index" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Clear Search
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="col-auto">
+            <!-- Create button - context aware -->
+            @if (Model.FilteredUser != null)
+            {
+                <a asp-page="Create" asp-route-userId="@Model.FilteredUser.Id"
+                   class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add Wish for @Model.FilteredUser.FullName
+                </a>
+            }
+            else
+            {
+                <a asp-page="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add New Wish
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="searchTerm" value="@Model.SearchTerm"
+                       class="form-control" placeholder="Search wishes by title or description..." />
+                <!-- Preserve user filter if exists -->
+                @if (Model.FilteredUser != null)
+                {
+                    <input type="hidden" name="userId" value="@Model.FilteredUser.Id" />
+                }
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <a asp-page="Index" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Wishes Display -->
+    @if (Model.Wishes.Count == 0)
+    {
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-inbox"></i>
+            <h4>No wishes found</h4>
+            @if (Model.FilteredUser != null)
+            {
+                <p>@Model.FilteredUser.FullName doesn't have any wishes yet.</p>
+                <a asp-page="Create" asp-route-userId="@Model.FilteredUser.Id"
+                   class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Wish
+                </a>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <p>No wishes match your search term.</p>
+                <a asp-page="Index" class="btn btn-secondary">View All Wishes</a>
+            }
+            else
+            {
+                <p>Start by creating your first wish!</p>
+                <a asp-page="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Wish
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var wish in Model.Wishes)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Image or placeholder -->
+                        @if (!string.IsNullOrEmpty(wish.Image))
+                        {
+                            <img src="@wish.Image" class="card-img-top" alt="@wish.Title"
+                                 style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                                 style="height: 200px;">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@wish.Title</h5>
+
+                            <!-- Description with truncation -->
+                            <p class="card-text">
+                                @if (!string.IsNullOrWhiteSpace(wish.Description))
+                                {
+                                    @(wish.Description.Length > 100
+                                        ? wish.Description.Substring(0, 100) + "..."
+                                        : wish.Description)
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No description provided</span>
+                                }
+                            </p>
+
+                            <!-- User info -->
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-person"></i>
+                                <a asp-page="Index" asp-route-userId="@wish.UserId"
+                                   class="text-decoration-none">
+                                    @wish.User?.FullName
+                                </a>
+                            </p>
+
+                            <!-- External link if available -->
+                            @if (!string.IsNullOrEmpty(wish.Url))
+                            {
+                                <a href="@wish.Url" target="_blank"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-link-45deg"></i> View Product
+                                </a>
+                            }
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="card-footer bg-transparent">
+                            <div class="btn-group w-100" role="group">
+                                <a asp-page="./Details" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-info" title="View Details">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <a asp-page="./Edit" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a asp-page="./Delete" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-3 text-muted text-center">
+            Showing @Model.Wishes.Count wish@(Model.Wishes.Count != 1 ? "es" : "")
+        </div>
+    }
+</div>

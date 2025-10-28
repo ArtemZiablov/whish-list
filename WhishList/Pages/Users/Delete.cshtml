@@ -1,0 +1,68 @@
+@page "{id:int}"
+@model WhishList.Pages.Users.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Delete Confirmation
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Warning message -->
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Warning!</strong> Are you sure you want to delete this user?
+                        This action cannot be undone.
+                    </div>
+
+                    <!-- Additional warning if user has wishes -->
+                    @if (Model.WishCount > 0)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-circle"></i>
+                            This user has <strong>@Model.WishCount wishes</strong> that will also be deleted!
+                        </div>
+                    }
+
+                    <!-- User details -->
+                    <dl class="row">
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">@Model.User.FullName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.User.Email</dd>
+
+                        <dt class="col-sm-4">User ID</dt>
+                        <dd class="col-sm-8">@Model.User.Id</dd>
+
+                        <dt class="col-sm-4">Total Wishes</dt>
+                        <dd class="col-sm-8">@Model.WishCount</dd>
+                    </dl>
+
+                    <!-- Delete form -->
+                    <form method="post">
+                        <input type="hidden" asp-for="User.Id" />
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <!-- Cancel button -->
+                            <a asp-page="./Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <!-- Delete button -->
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

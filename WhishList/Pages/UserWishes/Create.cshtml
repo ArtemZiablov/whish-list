@@ -1,0 +1,57 @@
+@page "{userId:int}"
+@model WhishList.Pages.UserWishes.CreateModel
+
+@{
+    ViewData["Title"] = $"Add Wish for {Model.User.FullName}";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Add Wish for @Model.User.FullName</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="Wish.UserId" />
+
+                        <div class="mb-3">
+                            <label asp-for="Wish.Title" class="form-label"></label>
+                            <input asp-for="Wish.Title" class="form-control" />
+                            <span asp-validation-for="Wish.Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Wish.Description" class="form-label"></label>
+                            <textarea asp-for="Wish.Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Wish.Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Wish.Image" class="form-label">Image URL</label>
+                            <input asp-for="Wish.Image" class="form-control" type="url" />
+                            <span asp-validation-for="Wish.Image" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Wish.Url" class="form-label">Product URL</label>
+                            <input asp-for="Wish.Url" class="form-control" type="url" />
+                            <span asp-validation-for="Wish.Url" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-page="Index" asp-route-userId="@Model.User.Id"
+                               class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Wish</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

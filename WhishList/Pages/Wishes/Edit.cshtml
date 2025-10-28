@@ -1,0 +1,88 @@
+@page "{id:int}"
+@model WhishList.Pages.Wishes.EditModel
+
+@{
+    ViewData["Title"] = "Edit Wish";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil"></i> Edit Wish
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- Hidden field for ID -->
+                        <input type="hidden" asp-for="Wish.Id" />
+
+                        <!-- Title Field -->
+                        <div class="mb-3">
+                            <label asp-for="Wish.Title" class="form-label">Title *</label>
+                            <input asp-for="Wish.Title" class="form-control" required />
+                            <span asp-validation-for="Wish.Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="mb-3">
+                            <label asp-for="Wish.Description" class="form-label">Description</label>
+                            <textarea asp-for="Wish.Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Wish.Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Image URL Field -->
+                        <div class="mb-3">
+                            <label asp-for="Wish.Image" class="form-label">Image URL</label>
+                            <input asp-for="Wish.Image" class="form-control" type="url" />
+                            <span asp-validation-for="Wish.Image" class="text-danger"></span>
+                            @if (!string.IsNullOrEmpty(Model.Wish.Image))
+                            {
+                                <div class="mt-2">
+                                    <small class="text-muted">Current image:</small><br />
+                                    <img src="@Model.Wish.Image" class="img-thumbnail"
+                                         style="max-height: 100px;" alt="Current image" />
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Product URL Field -->
+                        <div class="mb-3">
+                            <label asp-for="Wish.Url" class="form-label">Product URL</label>
+                            <input asp-for="Wish.Url" class="form-control" type="url" />
+                            <span asp-validation-for="Wish.Url" class="text-danger"></span>
+                        </div>
+
+                        <!-- User Selection -->
+                        <div class="mb-3">
+                            <label asp-for="Wish.UserId" class="form-label">User *</label>
+                            <select asp-for="Wish.UserId" asp-items="Model.UserList"
+                                    class="form-select" required>
+                                <option value="">-- Select User --</option>
+                            </select>
+                            <span asp-validation-for="Wish.UserId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-page="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Update Wish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

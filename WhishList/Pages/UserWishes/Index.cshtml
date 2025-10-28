@@ -1,0 +1,64 @@
+@page "{userId:int}"
+@model WhishList.Pages.UserWishes.IndexModel
+
+@{
+    ViewData["Title"] = $"Wishes for {Model.User.FullName}";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col">
+            <h1>Wishes for @Model.User.FullName</h1>
+            <p class="text-muted">@Model.User.Email | @Model.Wishes.Count wishes</p>
+        </div>
+        <div class="col text-end">
+            <!-- Create wish for this specific user -->
+            <a asp-page="Create" asp-route-userId="@Model.User.Id"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Wish for @Model.User.FullName
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Wishes.Count == 0)
+    {
+        <div class="alert alert-info">
+            No wishes found for this user.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var wish in Model.Wishes)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(wish.Image))
+                        {
+                            <img src="@wish.Image" class="card-img-top" alt="@wish.Title">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@wish.Title</h5>
+                            <p class="card-text">@wish.Description</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group w-100">
+                                <!-- Navigate to wish pages -->
+                                <a asp-page="/Wishes/Details" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-info">View</a>
+                                <a asp-page="/Wishes/Edit" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-warning">Edit</a>
+                                <a asp-page="/Wishes/Delete" asp-route-id="@wish.Id"
+                                   class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-page="/Users/Index" class="btn btn-secondary">Back to Users</a>
+    </div>
+</div>
