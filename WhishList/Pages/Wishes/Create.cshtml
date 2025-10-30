@@ -2,9 +2,7 @@
 @model WhishList.Pages.Wishes.CreateModel
 
 @{
-    ViewData["Title"] = Model.SelectedUser != null 
-        ? $"Add Wish for {Model.SelectedUser.FullName}" 
-        : "Create New Wish";
+    ViewData["Title"] = "Create New Wish";
 }
 
 <div class="container mt-4">
@@ -13,13 +11,15 @@
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="bi bi-plus-circle"></i> 
-                        @ViewData["Title"]
+                        <i class="bi bi-plus-circle"></i> Create New Wish
                     </h4>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <!-- Hidden field for UserId -->
+                        <input type="hidden" asp-for="Wish.UserId" />
                         
                         <!-- Title Field -->
                         <div class="mb-3">
@@ -53,43 +53,11 @@
                             <span asp-validation-for="Wish.Url" class="text-danger"></span>
                         </div>
                         
-                        <!-- User Selection -->
-                        <div class="mb-3">
-                            <label asp-for="Wish.UserId" class="form-label">User *</label>
-                            @if (Model.IsUserPreselected)
-                            {
-                                <!-- User is preselected and readonly -->
-                                <input type="hidden" asp-for="Wish.UserId" />
-                                <input type="text" class="form-control" 
-                                       value="@Model.SelectedUser.FullName" readonly />
-                                <small class="text-muted">Creating wish for this user</small>
-                            }
-                            else
-                            {
-                                <!-- User dropdown -->
-                                <select asp-for="Wish.UserId" asp-items="Model.UserList" 
-                                        class="form-select" required>
-                                    <option value="">-- Select User --</option>
-                                </select>
-                                <span asp-validation-for="Wish.UserId" class="text-danger"></span>
-                            }
-                        </div>
-                        
                         <!-- Form Actions -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            @if (Model.SelectedUser != null)
-                            {
-                                <a asp-page="Index" asp-route-userId="@Model.SelectedUser.Id" 
-                                   class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Cancel
-                                </a>
-                            }
-                            else
-                            {
-                                <a asp-page="Index" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Cancel
-                                </a>
-                            }
+                            <a asp-page="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle"></i> Create Wish
                             </button>

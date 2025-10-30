@@ -10,6 +10,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
         : base(options) {}
 
     public DbSet<Wish> Wishes { get; set; }
+    public DbSet<Friend> Friends { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -21,6 +22,19 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
             .WithMany(u => u.Wishes)
             .HasForeignKey(w => w.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Friend relationships
+        builder.Entity<Friend>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.SentFriendRequests)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Friend>()
+            .HasOne(f => f.FriendUser)
+            .WithMany(u => u.ReceivedFriendRequests)
+            .HasForeignKey(f => f.FriendUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Optional: Rename Identity tables
         builder.Entity<User>().ToTable("Users");

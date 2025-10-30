@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/artemziablov/RiderProjects/WhishList/WhishList/Pages/Friends/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRnJpZW5kcy9TZWFyY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/artemziablov/RiderProjects/WhishList/WhishList/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

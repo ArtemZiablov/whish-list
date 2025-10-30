@@ -9,9 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages(options =>
 {
+    // Require authentication for all pages except specified ones
     options.Conventions.AuthorizeFolder("/Wishes");
-    options.Conventions.AuthorizeFolder("/Users");
+    options.Conventions.AuthorizeFolder("/Friends");
     options.Conventions.AllowAnonymousToPage("/Index");
+    options.Conventions.AllowAnonymousToFolder("/Account");
 });
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -47,10 +49,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
 });
+
 // Add authorization
 builder.Services.AddAuthorization();
+
+// Add application services
 builder.Services.AddScoped<IWishService, WishService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
+
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();

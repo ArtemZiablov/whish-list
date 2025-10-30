@@ -135,3 +135,4 @@
 /Users/artemziablov/RiderProjects/WhishList/WhishList/obj/Debug/net8.0/WhishList.MvcApplicationPartsAssemblyInfo.cs
 /Users/artemziablov/RiderProjects/WhishList/WhishList/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 /Users/artemziablov/RiderProjects/WhishList/WhishList/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.UI.dll
+/Users/artemziablov/RiderProjects/WhishList/WhishList/obj/Debug/net8.0/WhishList.sourcelink.json

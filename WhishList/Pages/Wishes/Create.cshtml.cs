@@ -1,93 +1,54 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WhishList.Data;
-using WhishList.Services;
 using WhishList.Services.Interfaces;
 
-namespace WhishList.Pages.Wishes
+namespace WhishList.Pages.Wishes;
+
+[Authorize]
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly IWishService _wishService;
+    private readonly UserManager<User> _userManager;
+
+    public CreateModel(IWishService wishService, UserManager<User> userManager)
     {
-        private readonly IWishService _wishService;
-        private readonly IUserService _userService;
+        _wishService = wishService;
+        _userManager = userManager;
+    }
 
-        public CreateModel(IWishService wishService, IUserService userService)
+    [BindProperty]
+    public Wish Wish { get; set; }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+            return Challenge();
+
+        Wish = new Wish { UserId = currentUser.Id };
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+            return Challenge();
+
+        // Ensure the wish is created for the current user
+        Wish.UserId = currentUser.Id;
+
+        if (!ModelState.IsValid)
         {
-            _wishService = wishService;
-            _userService = userService;
-        }
-
-        [BindProperty]
-        public Wish Wish { get; set; }
-        
-        public SelectList UserList { get; set; }
-        public User SelectedUser { get; set; }
-        public bool IsUserPreselected { get; set; }
-
-        public IActionResult OnGet(int? userId = null)
-        {
-            if (userId.HasValue)
-            {
-                // Creating wish for specific user
-                SelectedUser = _userService.GetUserById(userId.Value);
-                if (SelectedUser == null)
-                {
-                    TempData["ErrorMessage"] = $"User with ID {userId} not found.";
-                    return RedirectToPage("./Index");
-                }
-                
-                // Pre-populate the UserId
-                Wish = new Wish { UserId = userId.Value };
-                IsUserPreselected = true;
-            }
-            
-            // Load users for dropdown
-            var users = _userService.GetAllUsers();
-            UserList = new SelectList(users, "Id", "FullName", userId);
-            
             return Page();
         }
 
-        public IActionResult OnPost(int? userId = null)
-        {
-            // If userId was provided in route, enforce it
-            if (userId.HasValue)
-            {
-                Wish.UserId = userId.Value;
-                SelectedUser = _userService.GetUserById(userId.Value);
-                IsUserPreselected = true;
-            }
+        _wishService.CreateWish(Wish);
+        TempData["SuccessMessage"] = $"Wish '{Wish.Title}' created successfully!";
 
-            if (!ModelState.IsValid)
-            {
-                // Reload data for the form
-                var users = _userService.GetAllUsers();
-                UserList = new SelectList(users, "Id", "FullName", Wish.UserId);
-                return Page();
-            }
-
-            // Verify the selected user exists
-            if (!_userService.UserExists(Wish.UserId))
-            {
-                ModelState.AddModelError("Wish.UserId", "Selected user does not exist.");
-                var users = _userService.GetAllUsers();
-                UserList = new SelectList(users, "Id", "FullName", Wish.UserId);
-                return Page();
-            }
-
-            _wishService.CreateWish(Wish);
-            TempData["SuccessMessage"] = $"Wish '{Wish.Title}' created successfully!";
-
-            // Redirect appropriately
-            if (userId.HasValue)
-            {
-                return RedirectToPage("./Index", new { userId = userId });
-            }
-            else
-            {
-                return RedirectToPage("./Index");
-            }
-        }
+        return RedirectToPage("./Index");
     }
 }
