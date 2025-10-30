@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WhishList")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ca19d3858b9be1620597a78aa15b74754d61d77")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b69bb17b55c10e932c649ee19f55f6de054567b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("WhishList")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WhishList")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
