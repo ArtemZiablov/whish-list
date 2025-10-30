@@ -60,6 +60,13 @@ builder.Services.AddScoped<IFriendService, FriendService>();
 
 builder.Services.AddProblemDetails();
 
+// Register the Currency Converter Service
+builder.Services.AddHttpClient<ICurrencyConverter, FrankfurterApiService>(client =>
+{
+    // Configure the base URL for the Frankfurter API
+    client.BaseAddress = new Uri("https://api.frankfurter.app/");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

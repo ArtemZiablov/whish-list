@@ -10,4 +10,7 @@ public class Wish
     // Foreign key
     public int UserId { get; set; }
     public User? User { get; set; }
+    public decimal PriceAmount { get; set; } 
+    public string PriceCurrencyCode { get; set; } = "EUR";
+    
 }

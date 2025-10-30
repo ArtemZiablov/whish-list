@@ -6,12 +6,37 @@
 }
 
 <div class="container mt-4">
-    <!-- Page Header -->
     <div class="row mb-3">
         <div class="col">
             <h1 class="display-4">@Model.ViewTitle</h1>
 
-            <!-- User filter info -->
+            @* --- NEW CURRENCY SELECTOR FORM --- *@
+            <form method="get" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-auto">
+                        <label for="SelectedCurrency" class="form-label mb-0">View Prices In:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select name="selectedCurrency" asp-for="SelectedCurrency" class="form-select" onchange="this.form.submit()">
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="DKK">Danish Krone (DKK)</option>
+                            <option value="UAH">Ukrainian Hryvnia (UAH)</option>
+                            <option value="USD">US Dollar (USD)</option>
+                        </select>
+                    </div>
+                    @* Preserve other filters/parameters when submitting the currency change *@
+                    @if (Model.FilteredUser != null)
+                    {
+                        <input type="hidden" name="userId" value="@Model.FilteredUser.Id" />
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                    {
+                        <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                    }
+                </div>
+            </form>
+            @* --- END CURRENCY SELECTOR --- *@
+
             @if (Model.FilteredUser != null)
             {
                 <div class="alert alert-info d-flex justify-content-between align-items-center">
@@ -26,7 +51,6 @@
                 </div>
             }
 
-            <!-- Search info -->
             @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
             {
                 <div class="alert alert-info d-flex justify-content-between align-items-center">
@@ -41,7 +65,6 @@
             }
         </div>
         <div class="col-auto">
-            <!-- Create button - context aware -->
             @if (Model.FilteredUser != null)
             {
                 <a asp-page="Create" asp-route-userId="@Model.FilteredUser.Id"
@@ -58,17 +81,16 @@
         </div>
     </div>
 
-    <!-- Search Form -->
     <form method="get" class="mb-4">
         <div class="row g-3">
             <div class="col-md-9">
                 <input type="text" name="searchTerm" value="@Model.SearchTerm"
                        class="form-control" placeholder="Search wishes by title or description..." />
-                <!-- Preserve user filter if exists -->
                 @if (Model.FilteredUser != null)
                 {
                     <input type="hidden" name="userId" value="@Model.FilteredUser.Id" />
                 }
+                <input type="hidden" name="selectedCurrency" value="@Model.SelectedCurrency" />
             </div>
             <div class="col-md-3">
                 <button type="submit" class="btn btn-outline-primary">
@@ -79,8 +101,8 @@
         </div>
     </form>
 
-    <!-- Wishes Display -->
-    @if (Model.Wishes.Count == 0)
+    @* We now check the count of ConvertedWishes which is populated from Wishes *@
+    @if (Model.ConvertedWishes?.Count == 0)
     {
         <div class="alert alert-warning text-center">
             <i class="bi bi-inbox"></i>
@@ -110,11 +132,11 @@
     else
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var wish in Model.Wishes)
+            @* --- UPDATED LOOP: Use ConvertedWishes --- *@
+            @foreach (var wish in Model.ConvertedWishes)
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm">
-                        <!-- Image or placeholder -->
                         @if (!string.IsNullOrEmpty(wish.Image))
                         {
                             <img src="@wish.Image" class="card-img-top" alt="@wish.Title"
@@ -131,7 +153,15 @@
                         <div class="card-body">
                             <h5 class="card-title">@wish.Title</h5>
 
-                            <!-- Description with truncation -->
+                            @* --- NEW PRICE DISPLAY --- *@
+                            @if (!string.IsNullOrEmpty(wish.DisplayPrice))
+                            {
+                                <h6 class="card-subtitle mb-2 text-success">
+                                    <i class="bi bi-tag"></i> **@wish.DisplayPrice**
+                                </h6>
+                            }
+                            @* --- END PRICE DISPLAY --- *@
+
                             <p class="card-text">
                                 @if (!string.IsNullOrWhiteSpace(wish.Description))
                                 {
@@ -145,16 +175,15 @@
                                 }
                             </p>
 
-                            <!-- User info -->
                             <p class="text-muted small mb-2">
                                 <i class="bi bi-person"></i>
                                 <a asp-page="Index" asp-route-userId="@wish.UserId"
                                    class="text-decoration-none">
+                                    @* Assuming User property is correctly mapped from the original Wish property. *@
                                     @wish.User?.FullName
                                 </a>
                             </p>
 
-                            <!-- External link if available -->
                             @if (!string.IsNullOrEmpty(wish.Url))
                             {
                                 <a href="@wish.Url" target="_blank"
@@ -164,7 +193,6 @@
                             }
                         </div>
 
-                        <!-- Action buttons -->
                         <div class="card-footer bg-transparent">
                             <div class="btn-group w-100" role="group">
                                 <a asp-page="./Details" asp-route-id="@wish.Id"
@@ -186,9 +214,8 @@
             }
         </div>
 
-        <!-- Summary -->
         <div class="mt-3 text-muted text-center">
-            Showing @Model.Wishes.Count wish@(Model.Wishes.Count != 1 ? "es" : "")
+            Showing @Model.ConvertedWishes.Count wish@(Model.ConvertedWishes.Count != 1 ? "es" : "")
         </div>
     }
 </div>
